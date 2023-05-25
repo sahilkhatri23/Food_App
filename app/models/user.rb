@@ -11,6 +11,7 @@ class User < ApplicationRecord
   end
 
   has_many :franchises, dependent: :destroy
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 end
