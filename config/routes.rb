@@ -9,8 +9,13 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  # get '/show', to: 'franchises#show'
+  # get '/index', to: 'franchises#index'
+
+  resources :franchises
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
-  # root "articles#index"
+  # root "franchises#index"
 end
