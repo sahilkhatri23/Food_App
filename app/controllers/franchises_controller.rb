@@ -1,36 +1,51 @@
 class FranchisesController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_authentication, :except => [:show, :index]
+  before_action :check_authentication, :except => [:show, :index, :showAllFranchise]
+  before_action :find_franchise, only: [:update, :destroy]
 
   def index
-    @franchise = Franchise.all
-    render json: @franchise
+      franchises = current_user.franchises
+      render json: franchises, status: :ok
+  end
+
+  def showAllFranchise
+    franchises = Franchise.all
+    render json: franchises, status: :ok
   end
 
   def show
-    @franchise = Franchise.find_by(location: params[:location])
-    render json: @franchise
+    franchise = Franchise.find_by(location: params[:location])
+    if franchise.present?
+      render json: franchise
+    else
+      render json: {message: "record not found!"}
+    end
   end
 
   def create
-    @franchise = Franchise.create(name: params[:name], description: params[:description], address: params[:address], location: params[:location], user_id: current_user.id)
-    render json: @franchise
+    franchise = current_user.franchises.create(franchise_params)
+    render json: franchise
   end
 
   def update
-    @franchise = Franchise.find(params[:id])
-    @franchise.update( name: params[:name], description: params[:description], address: params[:address], location: params[:location])
+    @franchise.update(franchise_params)
     render json: @franchise, status: :ok
   end
 
   def destroy
-    @franchise = Franchise.all
-    @franchise = Franchise.find(params[:id])
     @franchise.destroy
     render json: {message: "you destroyed an franchise!"}, status: :ok
   end
 
   private
+
+  def franchise_params
+    params.permit(:name, :description, :address, :location)
+  end
+
+  def find_franchise
+    @franchise = Franchise.find(params[:id])
+  end
 
   def check_authentication
     if current_user.role == "customer"
