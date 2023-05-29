@@ -1,30 +1,39 @@
 class FranchisesController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_authentication, :except => [:show, :index, :showAllFranchise]
+  before_action :check_authentication, :except => [:show_all_franchise]
   before_action :find_franchise, only: [:update, :destroy]
 
   def index
-      franchises = current_user.franchises
+    franchises = current_user.franchises
+    if franchises.blank?
+        render json: {message: "create an franchise."}
+    else
       render json: franchises, status: :ok
+    end
   end
 
-  def showAllFranchise
+  def show_all_franchise
     franchises = Franchise.all
-    render json: franchises, status: :ok
+    if franchises.blank?
+      render json: {message: "franchise not found on your location!"}
+    else
+      render json: franchises, status: :ok
+    end
   end
 
   def show
-    franchise = Franchise.find_by(location: params[:location])
-    if franchise.present?
-      render json: franchise
+    begin
+      franchise = current_user.franchises.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => e
+      render json: {message: "franchise not found with this id!"}
     else
-      render json: {message: "record not found!"}
+      render json: franchise
     end
   end
 
   def create
     franchise = current_user.franchises.create(franchise_params)
-    render json: franchise
+    render json: franchise, status: :ok
   end
 
   def update
@@ -44,7 +53,12 @@ class FranchisesController < ApplicationController
   end
 
   def find_franchise
-    @franchise = Franchise.find(params[:id])
+    begin
+      @franchise = current_user.franchises.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => e
+      message = "no franchise was found with id #{params[:id]}."
+      render  json: { error: message }, status: :not_found
+    end
   end
 
   def check_authentication
@@ -53,4 +67,5 @@ class FranchisesController < ApplicationController
     end
   end
 end
+
 
