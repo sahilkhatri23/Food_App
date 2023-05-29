@@ -12,7 +12,8 @@ Rails.application.routes.draw do
 
   # get '/show', to: 'franchises#show'
   # get '/index', to: 'franchises#index'
-  get '/showAllFranchise', to: 'franchises#showAllFranchise'
+  get '/show_all_franchise', to: 'franchises#show_all_franchise'
+  get '/show_all_menu_items', to: 'menu_items#show_all_menu_items'
   resources :franchises
   resources :menu_items
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
