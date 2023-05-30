@@ -14,8 +14,11 @@ Rails.application.routes.draw do
   # get '/index', to: 'franchises#index'
   get '/show_all_franchise', to: 'franchises#show_all_franchise'
   get '/show_all_menu_items', to: 'menu_items#show_all_menu_items'
+  get '/show_franchise_orders_for_owner', to: 'orders#show_franchise_orders_for_owner'
+
   resources :franchises
   resources :menu_items
+  resources :orders
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
