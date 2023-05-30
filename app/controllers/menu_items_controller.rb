@@ -1,8 +1,8 @@
 class MenuItemsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_authentication, :except => [:show_all_menu_items, :show]
-  before_action :load_franchise, :except => [:show_all_menu_items, :show]
-  before_action :load_franchise_for_customer, only: [:show, :show_all_menu_items]
+  before_action :load_franchise, only: [:update, :destroy]
+  before_action :load_franchise_for_customer, :except => [:destroy, :update]
 
   def index
     menu_items = @franchise.menu_items.all
@@ -20,14 +20,13 @@ class MenuItemsController < ApplicationController
   end
 
   def create
-    byebug
     menu_item = @franchise.menu_items.create(menu_item_params)
     render json: menu_item, status: :created
   end
 
   def update
     @menu_item.update(menu_item_params)
-    render json: @menu_item, status: :updated
+    render json: @menu_item, status: :ok
   end
 
   def destroy
