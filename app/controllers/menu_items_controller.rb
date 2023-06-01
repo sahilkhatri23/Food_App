@@ -1,11 +1,11 @@
 class MenuItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_authentication, :except => [:show_all_menu_items, :show]
-  before_action :load_franchise, only: [:update, :destroy]
-  before_action :load_franchise_for_customer, :except => [:destroy, :update]
+  before_action :check_authentication, :except => [:show_all_menu_items]
+  before_action :load_franchise, except: [:show_all_menu_items]
+  before_action :load_menu_item, only: [:update, :destroy]
 
   def index
-    menu_items = @franchise.menu_items.all
+    menu_items = @franchise.menu_items
     render json: menu_items, status: :ok
   end
 
@@ -15,8 +15,13 @@ class MenuItemsController < ApplicationController
   end
 
   def show_all_menu_items
-    menu_items = @franchise.menu_items.all
-    render json: menu_items, status: :ok
+    franchise = Franchise.find(params[:franchise_id])
+    menu_items = franchise.menu_items
+    if current_user.role == "customer"
+      render json: menu_items, status: :ok
+    else
+      render json: {message: "admin can't see full menu."}
+    end
   end
 
   def create
@@ -47,16 +52,10 @@ class MenuItemsController < ApplicationController
   end
 
   def load_franchise
-    begin
-      franchise = current_user.franchises.find(params[:franchise_id])
-      @menu_item = franchise.menu_items.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
-      message = "no franchise or menu item was found with id."
-      render  json: { error: message }, status: :not_found
-    end
+    @franchise = current_user.franchises.find(params[:franchise_id])
   end
 
-  def load_franchise_for_customer
-    @franchise = Franchise.find(params[:franchise_id])
+  def load_menu_item
+    @menu_item = @franchise.menu_items.find(params[:id])
   end
 end
