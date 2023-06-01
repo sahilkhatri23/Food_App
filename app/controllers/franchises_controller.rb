@@ -22,13 +22,9 @@ class FranchisesController < ApplicationController
   end
 
   def show
-    begin
+    if current_user.role == "owner"
       franchise = current_user.franchises.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
-      render json: {message: "franchise not found with this id!"}
-    else
-      render json: franchise
-    end
+    render json: franchise
   end
 
   def create
@@ -53,12 +49,7 @@ class FranchisesController < ApplicationController
   end
 
   def find_franchise
-    begin
-      @franchise = current_user.franchises.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
-      message = "no franchise was found with id #{params[:id]}."
-      render  json: { error: message }, status: :not_found
-    end
+    @franchise = current_user.franchises.find(params[:id])
   end
 
   def check_authentication

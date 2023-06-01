@@ -1,25 +1,35 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_authentication_customer
-  before_action :check_orders, only: [:show, :update, :destroy]
+  before_action :check_authentication_customer, except: [:show]
+  before_action :load_order, only: [:update, :destroy]
+  rescue_from ActiveRecord::RecordNotFound, :with => :check_orders
 
   def index
-    order = current_user.orders.all
-    render json: order
+    order = current_user.orders
+    if order.blank?
+      render json: {error: "ordered list is empty!"}
+    else
+      render json: order, status: :ok
+    end
   end
 
   def show
-    render json: @order
+    if current_user.role == "owner"
+      order = Order.find(params[:id])
+      render json: order
+    else
+      render json: {message: "you're not allowed to show orders!"}
+    end
   end
 
   def create
-    order = Order.create(order_params)
-    render json: order
+    order = current_user.orders.create(order_params.merge(order_time: DateTime.now))
+    render json: order, status: :created
   end
 
   def update
-    order = @order.update(order_params)
-    render json: {message: "order updated."}
+    @order.update(order_params)
+    render json: @order, status: :ok
   end
 
   def destroy
@@ -30,7 +40,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.permit(:user_id, :menu_item_id)
+    params.permit(:menu_item_id, :franchise_id)
   end
 
   def check_authentication_customer
@@ -39,12 +49,12 @@ class OrdersController < ApplicationController
     end
   end
 
+  def load_order
+    @order = current_user.orders.find(params[:id])
+  end
+
   def check_orders
-    begin
-      @order = current_user.orders.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
-      message = "no orders was found with this id."
-      render  json: { error: message }, status: :not_found
-    end
+    render  json: { error: "no order was found with this id." }, status: :not_found
   end
 end
+
