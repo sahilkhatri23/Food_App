@@ -33,6 +33,7 @@ gem "bootsnap", require: false
 gem "devise"
 gem "simple_token_authentication"
 gem 'byebug', '~> 11.1', '>= 11.1.3'
+gem 'active_model_serializers'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
