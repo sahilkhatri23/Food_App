@@ -6,7 +6,7 @@ class FranchisesController < ApplicationController
   def index
     franchises = current_user.franchises
     if franchises.blank?
-        render json: {message: "create an franchise."}
+      render json: {message: "create an franchise."}
     else
       render json: franchises, status: :ok
     end
@@ -24,16 +24,17 @@ class FranchisesController < ApplicationController
   def show
     if current_user.role == "owner"
       franchise = current_user.franchises.find(params[:id])
-    render json: franchise
+      render json: franchise
+    end
   end
 
   def create
-    franchise = current_user.franchises.create(franchise_params)
+    franchise = current_user.franchises.create!(franchise_params)
     render json: franchise, status: :ok
   end
 
   def update
-    @franchise.update(franchise_params)
+    @franchise.update!(franchise_params)
     render json: @franchise, status: :ok
   end
 
