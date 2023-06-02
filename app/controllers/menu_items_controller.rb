@@ -25,12 +25,12 @@ class MenuItemsController < ApplicationController
   end
 
   def create
-    menu_item = @franchise.menu_items.create(menu_item_params)
+    menu_item = @franchise.menu_items.create!(menu_item_params)
     render json: menu_item, status: :created
   end
 
   def update
-    @menu_item.update(menu_item_params)
+    @menu_item.update!(menu_item_params)
     render json: @menu_item, status: :ok
   end
 

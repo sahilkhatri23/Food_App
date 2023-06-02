@@ -23,12 +23,12 @@ class OrdersController < ApplicationController
   end
 
   def create
-    order = current_user.orders.create(order_params.merge(order_time: DateTime.now))
+    order = current_user.orders.create!(order_params.merge(order_time: DateTime.now))
     render json: order, status: :created
   end
 
   def update
-    @order.update(order_params)
+    @order.update!(order_params)
     render json: @order, status: :ok
   end
 
