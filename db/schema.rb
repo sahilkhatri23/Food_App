@@ -10,7 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_01_105404) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_09_071659) do
+  create_table "chats", force: :cascade do |t|
+    t.string "message"
+    t.integer "receiver_id"
+    t.integer "sender_id"
+    t.boolean "is_read", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiver_id"], name: "index_chats_on_receiver_id"
+    t.index ["sender_id"], name: "index_chats_on_sender_id"
+  end
+
+  create_table "follows", force: :cascade do |t|
+    t.integer "follower_id"
+    t.integer "followed_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "franchises", force: :cascade do |t|
     t.string "name"
     t.text "description"
