@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+  include ActionController::Helpers
+  include ActionView::Layouts
   acts_as_token_authentication_handler_for User
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from ActiveRecord::RecordInvalid, :with => :invalid_message
