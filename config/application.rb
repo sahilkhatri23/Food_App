@@ -27,9 +27,14 @@ module FoodApp
     # config.middleware.use ActionDispatch::Cookies
     # config.middleware.use config.session_store, config.session_options
 
-    config.session_store :disabled
+    # config.session_store :disabled
 
     config.api_only = true
-
+    config.middleware.use ActionDispatch::Flash
+    config.session_store :cookie_store, key: '_interslice_session'
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore,
+    config.session_options
+    config.middleware.use Rack::MethodOverride
   end
 end
